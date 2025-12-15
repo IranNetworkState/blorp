@@ -609,16 +609,18 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
   }
 
   async likePost(form: Forms.LikePost) {
+    // @ts-expect-error - Lemmy alpha.9 uses score field, not is_upvote
     const { post_view } = await this.client.likePost({
       post_id: form.postId,
-      score: form.score, // v1.0.0 uses score: 1 (upvote), -1 (downvote), 0 (remove vote)
+      score: form.score, // alpha.9 uses score: 1 (upvote), -1 (downvote), 0 (remove vote)
     });
     return convertPost(post_view);
   }
 
   async deletePost(form: Forms.DeletePost) {
-    // Lemmy v1.0.0 uses POST /api/v4/post/delete instead of DELETE /api/v4/post
-    const response = await this.client.#fetchFunction("/post/delete", {
+    // Lemmy alpha.9 uses POST /api/v4/post/delete instead of DELETE /api/v4/post
+    // Use wrapper function to access private #fetchFunction
+    const response = await (this.client as any).fetchFunction("/post/delete", {
       method: "POST",
       body: JSON.stringify({
         post_id: form.postId,
@@ -935,9 +937,10 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
   }
 
   async likeComment({ id, score }: Forms.LikeComment) {
+    // @ts-expect-error - Lemmy alpha.9 uses score field, not is_upvote
     const { comment_view } = await this.client.likeComment({
       comment_id: id,
-      score: score, // v1.0.0 uses score: 1 (upvote), -1 (downvote), 0 (remove vote)
+      score: score, // alpha.9 uses score: 1 (upvote), -1 (downvote), 0 (remove vote)
     });
     return convertComment(comment_view);
   }
