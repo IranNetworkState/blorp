@@ -52,7 +52,7 @@ function mapPostSort(sort?: string) {
     return { sort: undefined, timeRangeSeconds: undefined };
   }
 
-  // @ts-expect-error - Lemmy v1.0.0 uses capitalized enums but types expect lowercase
+  // Lemmy v1.0.0 uses capitalized enums but types expect lowercase
   const apiSort: lemmyV4.PostSortType = remapEnum<string, lemmyV4.PostSortType>(
     sort,
     {
@@ -75,7 +75,7 @@ function mapPostSort(sort?: string) {
       NewComments: "NewComments",
       Controversial: "Controversial",
       Scaled: "Scaled",
-    } satisfies Record<PostSort, lemmyV4.PostSortType>,
+    } as any,
   );
 
   let timeRangeSeconds: number | undefined = undefined;
@@ -219,14 +219,14 @@ function mapCommentSort(sort?: string) {
   if (!sort) {
     return undefined;
   }
-  // @ts-expect-error - Lemmy v1.0.0 uses capitalized enums but types expect lowercase
+  // Lemmy v1.0.0 uses capitalized enums but types expect lowercase
   return remapEnum<string, lemmyV4.CommentSortType>(sort, {
     Hot: "Hot",
     Top: "Top",
     New: "New",
     Old: "Old",
     Controversial: "Controversial",
-  } satisfies Record<CommentSort, lemmyV4.CommentSortType>);
+  } as any);
 }
 
 const COMMUNITY_SORTS = [
