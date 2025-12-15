@@ -687,6 +687,18 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
 
   async getPosts(form: Forms.GetPosts, options: RequestOptions) {
     const sort = mapPostSort(form.sort);
+    console.log("📝 [getPosts] Request params:", {
+      form,
+      mappedSort: sort,
+      mappedType: _.isNil(form.type)
+        ? form.type
+        : remapEnum(form.type, {
+            All: "All",
+            Local: "Local",
+            Subscribed: "Subscribed",
+            ModeratorView: "ModeratorView",
+          }),
+    });
     const posts = await this.client.getPosts(
       {
         show_read: form.showRead,
@@ -708,6 +720,10 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
       },
       options,
     );
+    console.log("📝 [getPosts] Response:", {
+      postCount: posts.posts.length,
+      nextCursor: posts.next_page,
+    });
 
     return {
       nextCursor: posts.next_page ?? null,
