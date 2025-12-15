@@ -275,6 +275,7 @@ function convertCommunity(
     id: community.id,
     apId: community.ap_id,
     slug: createSlug({ apId: community.ap_id, name: community.name }).slug,
+    name: (community as any).title || community.name, // Lemmy v1.0.0 has title field
     icon: community.icon ?? null,
     banner: community.banner ?? null,
     description: community.description ?? null,
