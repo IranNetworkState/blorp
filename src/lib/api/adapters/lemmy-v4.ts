@@ -686,6 +686,7 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
         show_read: form.showRead,
         sort: sort?.sort,
         time_range_seconds: sort?.timeRangeSeconds,
+        // @ts-expect-error - Lemmy v1.0.0 uses capitalized enums but types expect lowercase
         type_: _.isNil(form.type)
           ? form.type
           : remapEnum(form.type, {
@@ -852,6 +853,7 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
     const { items, next_page } = await this.client.getComments(
       {
         post_id,
+        // @ts-expect-error - Lemmy v1.0.0 uses capitalized enums but types expect lowercase
         type_: "All",
         sort,
         limit: this.limit,
