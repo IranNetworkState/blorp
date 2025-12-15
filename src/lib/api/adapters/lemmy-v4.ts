@@ -689,10 +689,10 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
         type_: _.isNil(form.type)
           ? form.type
           : remapEnum(form.type, {
-              All: "all",
-              Local: "local",
-              Subscribed: "subscribed",
-              ModeratorView: "moderator_view",
+              All: "All",
+              Local: "Local",
+              Subscribed: "Subscribed",
+              ModeratorView: "ModeratorView",
             }),
         page_cursor:
           form.pageCursor === INIT_PAGE_TOKEN ? undefined : form.pageCursor,
@@ -852,7 +852,7 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
     const { items, next_page } = await this.client.getComments(
       {
         post_id,
-        type_: "all",
+        type_: "All",
         sort,
         limit: this.limit,
         max_depth: form.maxDepth,
