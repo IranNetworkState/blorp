@@ -35,56 +35,89 @@ export function OAuthCallback() {
         console.log('🔍 [OAuth Callback] Code:', code ? 'present' : 'missing');
         console.log('🔍 [OAuth Callback] State:', stateParam ? 'present' : 'missing');
 
-        if (!code) {
+        if (!code || !stateParam) {
           throw new Error('Authorization denied or no code received');
         }
 
-        if (!stateParam) {
-          throw new Error('No state parameter received');
+        // Get state from local storage (if available from desktop flow)
+        let storedState: any = {};
+        try {
+          const storedStateStr = localStorage.getItem('oauth_state');
+          console.log('🔍 [OAuth Callback] localStorage oauth_state:', storedStateStr ? 'found' : 'not found');
+          storedState = JSON.parse(storedStateStr || '{}');
+        } catch (e) {
+          console.log('🔍 [OAuth Callback] Error reading localStorage:', e);
         }
 
-        // Retrieve stored OAuth state
-        const storedStateStr = localStorage.getItem('oauth_state');
-        if (!storedStateStr) {
-          throw new Error('No OAuth state found in storage');
-        }
+        // Check if this is a mobile app flow or direct OAuth flow
+        // Mobile/direct flow: localStorage state doesn't match URL state
+        // Desktop flow: localStorage state matches URL state
+        const isMobileOrDirectFlow = !storedState?.state || storedState.state !== stateParam;
+        console.log('🔍 [OAuth Callback] localStorage state:', storedState?.state?.substring(0, 10) + '...' || 'none');
+        console.log('🔍 [OAuth Callback] URL state:', stateParam?.substring(0, 10) + '...');
+        console.log('🔍 [OAuth Callback] States match:', storedState?.state === stateParam);
+        console.log('🔍 [OAuth Callback] Is mobile/direct flow:', isMobileOrDirectFlow);
 
-        const storedState = JSON.parse(storedStateStr);
-        console.log('🔍 [OAuth Callback] Stored state:', storedState);
-
-        // Verify state matches (CSRF protection)
-        if (stateParam !== storedState.state) {
-          throw new Error('State mismatch - possible CSRF attack');
-        }
-
-        // Check if state expired
-        if (Date.now() > storedState.expires_at) {
-          throw new Error('OAuth state expired - please try again');
+        // Validate state for desktop flow only
+        if (!isMobileOrDirectFlow) {
+          if (!storedState?.expires_at || Date.now() > storedState.expires_at) {
+            throw new Error('OAuth state expired - please try again');
+          }
         }
 
         console.log('✅ [OAuth Callback] State verified, exchanging code for JWT...');
 
-        // Exchange authorization code for JWT via Lemmy's OAuth endpoint
-        const tokenResponse = await fetch(`${storedState.instance}/api/v4/user/login`, {
+        // Determine instance URL and provider ID
+        const instanceUrl = isMobileOrDirectFlow 
+          ? window.location.origin  // Use current origin for mobile/direct flow
+          : storedState.instance;
+        
+        const providerId = isMobileOrDirectFlow 
+          ? 1  // Default to provider ID 1 (Iran Nation OAuth)
+          : storedState.provider_id;
+
+        const redirectUri = `${instanceUrl}/oauth/callback`;
+
+        console.log('🔍 [OAuth Callback] Instance:', instanceUrl);
+        console.log('🔍 [OAuth Callback] Provider ID:', providerId);
+        console.log('🔍 [OAuth Callback] Redirect URI:', redirectUri);
+
+        // Exchange authorization code for JWT via Lemmy's OAuth authenticate endpoint
+        const tokenResponse = await fetch(`${instanceUrl}/api/v4/oauth/authenticate`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            username_or_email: `oauth:${storedState.provider_id}:${code}`,
-            password: code,
+            code: code,
+            oauth_provider_id: providerId,
+            redirect_uri: redirectUri,
+            show_nsfw: storedState.show_nsfw || false,
           }),
         });
 
+        console.log('🔍 [OAuth Callback] Response status:', tokenResponse.status);
+        console.log('🔍 [OAuth Callback] Response ok:', tokenResponse.ok);
+
         if (!tokenResponse.ok) {
-          const errorData = await tokenResponse.json().catch(() => ({ error: 'Unknown error' }));
-          throw new Error(errorData.error || `Token exchange failed: ${tokenResponse.status}`);
+          const errorText = await tokenResponse.text();
+          console.error('❌ [OAuth Callback] Error response:', errorText);
+          throw new Error(`HTTP ${tokenResponse.status}: ${tokenResponse.statusText}`);
         }
 
         const data = await tokenResponse.json();
-        console.log('✅ [OAuth Callback] JWT received');
+        console.log('✅ [OAuth Callback] Response data:', data);
+        console.log('✅ [OAuth Callback] JWT present:', !!data.jwt);
+        console.log('✅ [OAuth Callback] verify_email_sent:', data.verify_email_sent);
+        console.log('✅ [OAuth Callback] registration_created:', data.registration_created);
 
         if (!data.jwt) {
+          if (data.verify_email_sent) {
+            throw new Error('Please verify your email address');
+          }
+          if (data.registration_created) {
+            throw new Error('Registration application sent - awaiting approval');
+          }
           throw new Error('No JWT in response');
         }
 
@@ -92,13 +125,13 @@ export function OAuthCallback() {
 
         // Store JWT in auth store (same as regular login)
         addAccount({
-          instance: storedState.instance,
+          instance: instanceUrl,
           jwt: data.jwt,
           username: data.username || 'OAuth User',
         });
 
         updateSelectedAccount({
-          instance: storedState.instance,
+          instance: instanceUrl,
         });
 
         // Clean up OAuth state
