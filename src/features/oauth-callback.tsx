@@ -65,7 +65,7 @@ export function OAuthCallback() {
         console.log('✅ [OAuth Callback] State verified, exchanging code for JWT...');
 
         // Exchange authorization code for JWT via Lemmy's OAuth endpoint
-        const tokenResponse = await fetch(`${storedState.instance}/api/v3/user/login`, {
+        const tokenResponse = await fetch(`${storedState.instance}/api/v4/user/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
