@@ -808,7 +808,7 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
 
   async getCommunities(form: Forms.GetCommunities, options: RequestOptions) {
     const sort = mapCommunitySort(form.sort);
-    const { items, next_page } = await this.client.listCommunities(
+    const response = await this.client.listCommunities(
       {
         sort: sort.sort,
         time_range_seconds: sort.timeRangeSeconds,
@@ -827,9 +827,11 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
       options,
     );
 
+    // Lemmy v1.0.0 returns { communities: [] } not { items: [] }
+    const communityItems = (response as any).communities || (response as any).items || [];
     return {
-      communities: items.map(convertCommunity),
-      nextCursor: next_page ?? null,
+      communities: communityItems.map(convertCommunity),
+      nextCursor: (response as any).next_page ?? null,
     };
   }
 
@@ -880,7 +882,7 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
 
     const sort = mapCommentSort(form.sort);
 
-    const { items, next_page } = await this.client.getComments(
+    const response = await this.client.getComments(
       {
         post_id,
         // @ts-expect-error - Lemmy v1.0.0 uses capitalized enums but types expect lowercase
@@ -894,12 +896,14 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
       options,
     );
 
+    // Lemmy v1.0.0 returns { comments: [] } not { items: [] }
+    const commentItems = (response as any).comments || (response as any).items || [];
     return {
-      comments: items.map(convertComment),
-      creators: items.map(({ creator }) => convertPerson({ person: creator })),
+      comments: commentItems.map(convertComment),
+      creators: commentItems.map(({ creator }: any) => convertPerson({ person: creator })),
       // Lemmy next cursor is broken when maxDepth is present.
       // It will page out to infinity until we get rate limited
-      nextCursor: _.isNil(form.maxDepth) ? (next_page ?? null) : null,
+      nextCursor: _.isNil(form.maxDepth) ? ((response as any).next_page ?? null) : null,
     };
   }
 
