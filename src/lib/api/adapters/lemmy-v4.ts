@@ -336,6 +336,15 @@ function convertPost({
   | "creator_banned_from_community"
 >): Schemas.Post {
   const ar = image_details ? image_details.width / image_details.height : null;
+  // Fix mixed content: upgrade http:// to https:// for same-origin URLs
+  const normalizeUrl = (url: string | null | undefined): string | null => {
+    if (!url) return null;
+    if (url.startsWith('http://forum.irannation.com')) {
+      return url.replace('http://', 'https://');
+    }
+    return url;
+  };
+  
   return {
     locked: post.locked,
     id: post.id,
@@ -343,8 +352,8 @@ function convertPost({
     apId: post.ap_id,
     title: post.name,
     body: post.body ?? null,
-    thumbnailUrl: post.thumbnail_url ?? null,
-    embedVideoUrl: post.embed_video_url ?? null,
+    thumbnailUrl: normalizeUrl(post.thumbnail_url),
+    embedVideoUrl: normalizeUrl(post.embed_video_url),
     upvotes: post.upvotes,
     downvotes: post.downvotes,
     commentsCount: post.comments,
@@ -358,7 +367,7 @@ function convertPost({
     creatorSlug: createSlug({ apId: creator.ap_id, name: creator.name }).slug,
     isBannedFromCommunity: creator_banned_from_community,
     thumbnailAspectRatio: ar,
-    url: post.url ?? null,
+    url: normalizeUrl(post.url),
     urlContentType: post.url_content_type ?? null,
     crossPosts: [],
     featuredCommunity: post.featured_community,
@@ -368,16 +377,12 @@ function convertPost({
     nsfw: post.nsfw || community.nsfw,
     altText: post.alt_text ?? null,
     flairs: [],
-    myVote: post_actions ? (post_actions.vote_is_upvote ? 1 : -1) : undefined,
+    myVote: post_actions?.vote_is_upvote === true ? 1 : post_actions?.vote_is_upvote === false ? -1 : undefined,
   };
 }
 function convertComment(commentView: lemmyV4.CommentView): Schemas.Comment {
   const { post, creator, comment, community, comment_actions } = commentView;
-  const myVote = comment_actions
-    ? comment_actions.vote_is_upvote
-      ? 1
-      : -1
-    : null;
+  const myVote = comment_actions?.vote_is_upvote === true ? 1 : comment_actions?.vote_is_upvote === false ? -1 : null;
   return {
     locked: comment.locked,
     createdAt: comment.published_at,
@@ -606,17 +611,22 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
   async likePost(form: Forms.LikePost) {
     const { post_view } = await this.client.likePost({
       post_id: form.postId,
-      is_upvote: form.score === 0 ? undefined : form.score === 1,
+      score: form.score, // v1.0.0 uses score: 1 (upvote), -1 (downvote), 0 (remove vote)
     });
     return convertPost(post_view);
   }
 
   async deletePost(form: Forms.DeletePost) {
-    const { post_view } = await this.client.deletePost({
-      post_id: form.postId,
-      deleted: form.deleted,
+    // Lemmy v1.0.0 uses POST /api/v4/post/delete instead of DELETE /api/v4/post
+    const response = await this.client.#fetchFunction("/post/delete", {
+      method: "POST",
+      body: JSON.stringify({
+        post_id: form.postId,
+        deleted: form.deleted,
+      }),
     });
-    return convertPost(post_view);
+    const data = await response.json();
+    return convertPost(data.post_view);
   }
 
   async featurePost(form: Forms.FeaturePost) {
@@ -927,7 +937,7 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
   async likeComment({ id, score }: Forms.LikeComment) {
     const { comment_view } = await this.client.likeComment({
       comment_id: id,
-      is_upvote: score === 0 ? undefined : score === 1,
+      score: score, // v1.0.0 uses score: 1 (upvote), -1 (downvote), 0 (remove vote)
     });
     return convertComment(comment_view);
   }
