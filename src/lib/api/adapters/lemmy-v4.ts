@@ -622,6 +622,15 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
 
   async deletePost(form: Forms.DeletePost) {
     // Lemmy alpha.9 uses POST /api/v4/post/delete instead of DELETE /api/v4/post
+    console.log('🗑️ [deletePost] Starting delete:', { postId: form.postId, deleted: form.deleted });
+    console.log('🗑️ [deletePost] JWT present:', !!this.jwt);
+    
+    const requestBody = {
+      post_id: form.postId,
+      deleted: form.deleted,
+    };
+    console.log('🗑️ [deletePost] Request body:', requestBody);
+    
     const response = await fetch(`${this.instance}/api/v4/post/delete`, {
       method: "POST",
       headers: {
@@ -629,17 +638,19 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
         ...(this.jwt ? { Authorization: `Bearer ${this.jwt}` } : {}),
       },
       cache: "no-cache",
-      body: JSON.stringify({
-        post_id: form.postId,
-        deleted: form.deleted,
-      }),
+      body: JSON.stringify(requestBody),
     });
     
+    console.log('🗑️ [deletePost] Response status:', response.status);
+    
     if (!response.ok) {
-      throw new Error(`Delete post failed: ${response.status}`);
+      const errorText = await response.text();
+      console.error('🗑️ [deletePost] Error response:', errorText);
+      throw new Error(`Delete post failed: ${response.status} - ${errorText}`);
     }
     
     const data = await response.json();
+    console.log('🗑️ [deletePost] Success:', data);
     return convertPost(data.post_view);
   }
 
