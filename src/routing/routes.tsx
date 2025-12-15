@@ -102,6 +102,8 @@ export const routeDefs = {
   ...buildRoute("/settings/manage-blocks/:index", manageAccountSchema),
   ...buildRoute("/settings/update-profile/:index", manageAccountSchema),
   ...buildRoute("/settings/*"),
+  // OAuth
+  ...buildRoute("/oauth/callback"),
   // Other
   ...buildRoute("/download"),
   ...buildRoute("/support"),

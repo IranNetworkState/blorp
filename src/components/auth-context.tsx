@@ -55,6 +55,24 @@ import { Software } from "../lib/api/adapters/api-blueprint";
 import { ToolbarTitle } from "./toolbar/toolbar-title";
 import { ChevronLeft, Spinner, X } from "@/src/components/icons";
 
+// ===== OAuth Types =====
+type OAuthProvider = {
+  id: number;
+  display_name: string;
+  authorization_endpoint: string;
+  token_endpoint: string;
+  client_id: string;
+  scopes: string;
+};
+
+type OAuthState = {
+  state: string;
+  provider_id: number;
+  instance: string;
+  redirect_uri: string;
+  expires_at: number;
+};
+
 function LegalNotice({ instance }: { instance: SelectedInstance }) {
   return (
     <span className="mx-auto text-muted-foreground text-sm text-center">
@@ -386,10 +404,44 @@ function LoginForm({
     instance,
   });
 
-  // Phase 1: Inspect OAuth providers data structure
-  console.log('🔍 [Phase 1] Site data:', site.data);
-  console.log('🔍 [Phase 1] OAuth providers:', site.data?.site?.public?.oauth_providers);
-  console.log('🔍 [Phase 1] Full site object keys:', site.data ? Object.keys(site.data) : 'no data');
+  // OAuth providers from site data
+  const oauthProviders = (site.data?.oauth_providers || []) as OAuthProvider[];
+  const hasOAuthOnly = oauthProviders.length > 0 && site.data?.site_view?.local_site?.registration_mode === 'Closed';
+
+  // OAuth handler
+  const handleOAuthLogin = (provider: OAuthProvider) => {
+    try {
+      // Generate random state for CSRF protection
+      const state = crypto.randomUUID();
+      const redirectUri = `${window.location.origin}/oauth/callback`;
+      const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes
+
+      // Store OAuth state in localStorage
+      const oauthState: OAuthState = {
+        state,
+        provider_id: provider.id,
+        instance: instance.url,
+        redirect_uri: redirectUri,
+        expires_at: expiresAt,
+      };
+      localStorage.setItem('oauth_state', JSON.stringify(oauthState));
+
+      // Build authorization URL
+      const authUrl = new URL(provider.authorization_endpoint);
+      authUrl.searchParams.set('client_id', provider.client_id);
+      authUrl.searchParams.set('redirect_uri', redirectUri);
+      authUrl.searchParams.set('response_type', 'code');
+      authUrl.searchParams.set('scope', provider.scopes);
+      authUrl.searchParams.set('state', state);
+
+      console.log('🔐 [OAuth] Redirecting to:', authUrl.toString());
+
+      // Redirect to OAuth provider
+      window.location.assign(authUrl.toString());
+    } catch (error) {
+      console.error('❌ [OAuth] Login error:', error);
+    }
+  };
 
   const resetForm = () => {
     setUsername("");
@@ -421,9 +473,32 @@ function LoginForm({
       className="gap-4 flex flex-col p-4 overflow-y-auto ion-content-scroll-host h-full overflow-x-hidden"
       data-testid="login-form"
     >
-      <div className="flex flex-col gap-1">
-        <label className="text-muted-foreground text-sm">Username</label>
-        <div className="flex gap-2">
+      {/* OAuth Providers Section */}
+      {oauthProviders.length > 0 && (
+        <div className="flex flex-col gap-2 mb-4 pb-4 border-b border-border">
+          <label className="text-muted-foreground text-sm text-center">
+            {hasOAuthOnly ? 'Sign in with' : 'Or sign in with'}
+          </label>
+          {oauthProviders.map((provider) => (
+            <Button
+              key={provider.id}
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => handleOAuthLogin(provider)}
+            >
+              {provider.display_name}
+            </Button>
+          ))}
+        </div>
+      )}
+
+      {/* Hide username/password forms in SSO-only mode */}
+      {!hasOAuthOnly && (
+        <>
+          <div className="flex flex-col gap-1">
+            <label className="text-muted-foreground text-sm">Username</label>
+            <div className="flex gap-2">
           <Input
             placeholder="Username"
             id="username"
@@ -486,19 +561,28 @@ function LoginForm({
         </InputOTP>
       )}
 
-      <Button type="submit" className="mx-auto">
-        Sign In
-        {login.isPending && <LuLoaderCircle className="animate-spin" />}
-      </Button>
+          <Button type="submit" className="mx-auto">
+            Sign In
+            {login.isPending && <LuLoaderCircle className="animate-spin" />}
+          </Button>
 
-      <span className="mx-auto">
-        Need an account?
-        <Button type="button" variant="link" onClick={handleSignup}>
-          Sign up
-        </Button>
-      </span>
+          <span className="mx-auto">
+            Need an account?
+            <Button type="button" variant="link" onClick={handleSignup}>
+              Sign up
+            </Button>
+          </span>
+        </>
+      )}
 
-      {site.data?.site.privateInstance === false && (
+      {/* Show SSO-only message */}
+      {hasOAuthOnly && (
+        <p className="text-center text-sm text-muted-foreground mt-2">
+          This instance uses single sign-on authentication only.
+        </p>
+      )}
+
+      {!hasOAuthOnly && site.data?.site.privateInstance === false && (
         <Button
           type="button"
           className="mx-auto"

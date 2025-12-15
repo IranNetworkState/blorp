@@ -70,6 +70,7 @@ const LightBoxPostFeed = lazy(
 const LightBox = lazy(() => import("@/src/features/light-box/light-box"));
 
 const Instance = lazy(() => import("@/src/features/instance"));
+const OAuthCallback = lazy(() => import("@/src/features/oauth-callback").then(m => ({ default: m.OAuthCallback })));
 
 const SKIP_NAV_ID = "#main";
 function SkipNav() {
@@ -426,6 +427,9 @@ function Tabs() {
               </Route>
               <Route exact path="/c/:id">
                 <ApResolver />
+              </Route>
+              <Route exact path="/oauth/callback">
+                <OAuthCallback />
               </Route>
               <Route exact path="/download">
                 <Download />
