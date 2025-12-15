@@ -609,9 +609,10 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
   }
 
   async likePost(form: Forms.LikePost) {
-    // @ts-expect-error - Lemmy alpha.9 uses score field, not is_upvote
+    // Lemmy alpha.9 uses score field, not is_upvote
     const { post_view } = await this.client.likePost({
       post_id: form.postId,
+      // @ts-expect-error - score field not in type definitions
       score: form.score, // alpha.9 uses score: 1 (upvote), -1 (downvote), 0 (remove vote)
     });
     return convertPost(post_view);
@@ -937,9 +938,10 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
   }
 
   async likeComment({ id, score }: Forms.LikeComment) {
-    // @ts-expect-error - Lemmy alpha.9 uses score field, not is_upvote
+    // Lemmy alpha.9 uses score field, not is_upvote
     const { comment_view } = await this.client.likeComment({
       comment_id: id,
+      // @ts-expect-error - score field not in type definitions
       score: score, // alpha.9 uses score: 1 (upvote), -1 (downvote), 0 (remove vote)
     });
     return convertComment(comment_view);
