@@ -386,6 +386,11 @@ function LoginForm({
     instance,
   });
 
+  // Phase 1: Inspect OAuth providers data structure
+  console.log('🔍 [Phase 1] Site data:', site.data);
+  console.log('🔍 [Phase 1] OAuth providers:', site.data?.site?.public?.oauth_providers);
+  console.log('🔍 [Phase 1] Full site object keys:', site.data ? Object.keys(site.data) : 'no data');
+
   const resetForm = () => {
     setUsername("");
     setPassword("");
