@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useIonRouter } from "@ionic/react";
 import { useAuth } from "@/src/stores/auth";
 import { Spinner } from "@/src/components/icons";
 
@@ -19,7 +19,7 @@ export function OAuthCallback() {
   
   const updateSelectedAccount = useAuth((s: any) => s.updateSelectedAccount);
   const addAccount = useAuth((s: any) => s.addAccount);
-  const navigate = useNavigate();
+  const router = useIonRouter();
 
   useEffect(() => {
     let isMounted = true;
@@ -110,7 +110,7 @@ export function OAuthCallback() {
         // Redirect to home after short delay
         timeoutId = setTimeout(() => {
           if (isMounted) {
-            navigate('/home');
+            router.push('/home');
           }
         }, 500);
 
@@ -127,7 +127,7 @@ export function OAuthCallback() {
         // Redirect back to home after delay (auth modal will open)
         timeoutId = setTimeout(() => {
           if (isMounted) {
-            navigate('/home');
+            router.push('/home');
           }
         }, 3000);
       }
@@ -142,7 +142,7 @@ export function OAuthCallback() {
         clearTimeout(timeoutId);
       }
     };
-  }, [navigate, updateSelectedAccount, addAccount]);
+  }, [router, updateSelectedAccount, addAccount]);
 
   // Render status UI
   if (status === 'loading') {
