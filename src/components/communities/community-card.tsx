@@ -75,7 +75,7 @@ export function CommunityCard({
             size === "sm" && "text-xs",
           )}
         >
-          {name}
+          {communityView.title || name}
           <span className="text-muted-foreground italic">@{host}</span>
         </span>
         {_.isNumber(communityView.subscriberCount) && size === "md" && (
