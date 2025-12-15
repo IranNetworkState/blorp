@@ -119,6 +119,7 @@ const communitySchema = z.object({
   id: z.number(),
   apId: z.string(),
   slug: communitySlug,
+  title: z.string().optional(), // Lemmy v1.0.0 community title
   icon: z.string().nullable(),
   description: z.string().nullable().optional(),
   banner: z.string().nullable().optional(),
