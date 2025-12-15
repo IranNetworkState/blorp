@@ -720,14 +720,18 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
       },
       options,
     );
+    
+    // Lemmy v1.0.0 returns { posts: [], next_page: ... } not { items: [] }
+    const postItems = (posts as any).posts || (posts as any).items || [];
     console.log("📝 [getPosts] Response:", {
-      postCount: posts.posts.length,
+      postCount: postItems.length,
       nextCursor: posts.next_page,
+      rawKeys: Object.keys(posts),
     });
 
     return {
       nextCursor: posts.next_page ?? null,
-      posts: posts.items.map((p) => ({
+      posts: postItems.map((p: any) => ({
         post: convertPost(p),
         creator: convertPerson({ person: p.creator }),
         community: convertCommunity({
