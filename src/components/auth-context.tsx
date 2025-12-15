@@ -186,10 +186,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     (config?: { addAccount?: boolean }) => {
       const addAccount = config?.addAccount === true;
 
+      console.log("🔑 [authenticate] Called", { isLoggedIn, addAccount });
+
       if (isLoggedIn && !addAccount) {
+        console.log("🔑 [authenticate] Already logged in, skipping");
         return Promise.resolve();
       }
 
+      console.log("🔑 [authenticate] Setting promise to open modal");
       const p = new Promise<void>((resolve, reject) => {
         setPromise({ resolve, reject, addAccount });
       });
