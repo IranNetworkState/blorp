@@ -22,6 +22,9 @@ export function OAuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    let isMounted = true;
+    let timeoutId: NodeJS.Timeout | null = null;
+
     const handleCallback = async () => {
       try {
         // Extract code and state from URL
@@ -61,15 +64,15 @@ export function OAuthCallback() {
 
         console.log('✅ [OAuth Callback] State verified, exchanging code for JWT...');
 
-        // Exchange authorization code for JWT
+        // Exchange authorization code for JWT via Lemmy's OAuth endpoint
         const tokenResponse = await fetch(`${storedState.instance}/api/v3/user/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            oauth_code: code,
-            oauth_provider_id: storedState.provider_id,
+            username_or_email: `oauth:${storedState.provider_id}:${code}`,
+            password: code,
           }),
         });
 
@@ -84,6 +87,8 @@ export function OAuthCallback() {
         if (!data.jwt) {
           throw new Error('No JWT in response');
         }
+
+        if (!isMounted) return;
 
         // Store JWT in auth store (same as regular login)
         addAccount({
@@ -103,26 +108,40 @@ export function OAuthCallback() {
         setStatus('success');
 
         // Redirect to home after short delay
-        setTimeout(() => {
-          navigate('/');
+        timeoutId = setTimeout(() => {
+          if (isMounted) {
+            navigate('/home');
+          }
         }, 500);
 
       } catch (err: any) {
         console.error('❌ [OAuth Callback] Error:', err);
+        if (!isMounted) return;
+        
         setError(err.message || 'OAuth login failed');
         setStatus('error');
 
         // Clean up failed OAuth state
         localStorage.removeItem('oauth_state');
 
-        // Redirect back to login after delay
-        setTimeout(() => {
-          navigate('/login');
+        // Redirect back to home after delay (auth modal will open)
+        timeoutId = setTimeout(() => {
+          if (isMounted) {
+            navigate('/home');
+          }
         }, 3000);
       }
     };
 
     handleCallback();
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [navigate, updateSelectedAccount, addAccount]);
 
   // Render status UI
