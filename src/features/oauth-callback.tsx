@@ -17,13 +17,13 @@ export function OAuthCallback() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [error, setError] = useState<string>('');
   
-  const updateSelectedAccount = useAuth((s) => s.updateSelectedAccount);
-  const addAccount = useAuth((s) => s.addAccount);
+  const updateSelectedAccount = useAuth((s: any) => s.updateSelectedAccount);
+  const addAccount = useAuth((s: any) => s.addAccount);
   const navigate = useNavigate();
 
   useEffect(() => {
     let isMounted = true;
-    let timeoutId: NodeJS.Timeout | null = null;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
     const handleCallback = async () => {
       try {
