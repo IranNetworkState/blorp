@@ -130,33 +130,34 @@ function mapCommunitySort(sort?: string) {
     return { sort: undefined, timeRangeSeconds: undefined };
   }
 
+  // Lemmy v1.0.0 uses capitalized enums but types expect lowercase
   const apiSort: lemmyV4.CommunitySortType = remapEnum<
     string,
     lemmyV4.CommunitySortType
   >(sort, {
-    ActiveSixMonths: "active_six_months",
-    ActiveMonthly: "active_monthly",
-    ActiveWeekly: "active_weekly",
-    ActiveDaily: "active_daily",
-    Hot: "hot",
-    New: "new",
-    Old: "old",
-    NameAsc: "name_asc",
-    NameDesc: "name_desc",
-    MostComments: "comments",
-    MostPosts: "posts",
-    TopAll: "subscribers",
-    TopHour: "subscribers",
-    TopSixHour: "subscribers",
-    TopTwelveHour: "subscribers",
-    TopDay: "subscribers",
-    TopWeek: "subscribers",
-    TopMonth: "subscribers",
-    TopThreeMonths: "subscribers",
-    TopSixMonths: "subscribers",
-    TopNineMonths: "subscribers",
-    TopYear: "subscribers",
-  } satisfies Record<CommunitySort, lemmyV4.CommunitySortType>);
+    ActiveSixMonths: "ActiveSixMonths",
+    ActiveMonthly: "ActiveMonthly",
+    ActiveWeekly: "ActiveWeekly",
+    ActiveDaily: "ActiveDaily",
+    Hot: "Hot",
+    New: "New",
+    Old: "Old",
+    NameAsc: "NameAsc",
+    NameDesc: "NameDesc",
+    MostComments: "Comments",
+    MostPosts: "Posts",
+    TopAll: "Subscribers",
+    TopHour: "Subscribers",
+    TopSixHour: "Subscribers",
+    TopTwelveHour: "Subscribers",
+    TopDay: "Subscribers",
+    TopWeek: "Subscribers",
+    TopMonth: "Subscribers",
+    TopThreeMonths: "Subscribers",
+    TopSixMonths: "Subscribers",
+    TopNineMonths: "Subscribers",
+    TopYear: "Subscribers",
+  } as any);
 
   let timeRangeSeconds: number | undefined = undefined;
 
@@ -621,9 +622,10 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
   async featurePost(form: Forms.FeaturePost) {
     const { post_view } = await this.client.featurePost({
       post_id: form.postId,
+      // @ts-expect-error - Lemmy v1.0.0 uses capitalized enums but types expect lowercase
       feature_type: remapEnum(form.featureType, {
-        Local: "local",
-        Community: "community",
+        Local: "Local",
+        Community: "Community",
       }),
       featured: form.featured,
     });
@@ -660,9 +662,10 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
         limit: this.limit,
         page_cursor:
           form.pageCursor === INIT_PAGE_TOKEN ? undefined : form.pageCursor,
+        // @ts-expect-error - Lemmy v1.0.0 uses capitalized enums but types expect lowercase
         type_: remapEnum(form.type, {
-          Posts: "posts",
-          Comments: "comments",
+          Posts: "Posts",
+          Comments: "Comments",
         } as const),
       },
       options,
@@ -728,16 +731,19 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
         community_name: form.communitySlug,
         page_cursor:
           form.pageCursor === INIT_PAGE_TOKEN ? undefined : form.pageCursor,
+        // @ts-expect-error - Lemmy v1.0.0 uses capitalized enums but types expect lowercase
         type_: remapEnum(form.type, {
-          Posts: "posts",
-          Users: "users",
-          Comments: "comments",
-          Communities: "communities",
-          All: "all",
+          Posts: "Posts",
+          Users: "Users",
+          Comments: "Comments",
+          Communities: "Communities",
+          All: "All",
         }),
         limit: form.limit ?? this.limit,
-        sort: topSort ? "top" : "new",
-        listing_type: "all",
+        // @ts-expect-error - Lemmy v1.0.0 uses capitalized enums but types expect lowercase
+        sort: topSort ? "Top" : "New",
+        // @ts-expect-error - Lemmy v1.0.0 uses capitalized enums but types expect lowercase
+        listing_type: "All",
       },
       options,
     );
@@ -787,14 +793,15 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
       {
         sort: sort.sort,
         time_range_seconds: sort.timeRangeSeconds,
+        // Lemmy v1.0.0 uses capitalized enums but types expect lowercase
         type_: _.isNil(form.type)
           ? form.type
           : remapEnum(form.type, {
-              All: "all",
-              Local: "local",
-              Subscribed: "subscribed",
-              ModeratorView: "moderator_view",
-            }),
+              All: "All",
+              Local: "Local",
+              Subscribed: "Subscribed",
+              ModeratorView: "ModeratorView",
+            } as any),
         page_cursor:
           form.pageCursor === INIT_PAGE_TOKEN ? undefined : form.pageCursor,
       },
@@ -968,7 +975,7 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
   ) {
     const { items, next_page } = await this.client.listNotifications(
       {
-        type_: "private_message",
+        type_: "PrivateMessage" as any,
         unread_only: form.unreadOnly,
         page_cursor:
           form.pageCursor === INIT_PAGE_TOKEN ? undefined : form.pageCursor,
@@ -1017,7 +1024,7 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
   async getReplies(form: Forms.GetReplies, options: RequestOptions) {
     const { items, next_page } = await this.client.listNotifications(
       {
-        type_: "reply",
+        type_: "Reply" as any,
         page_cursor:
           form.pageCursor === INIT_PAGE_TOKEN ? undefined : form.pageCursor,
         unread_only: form.unreadOnly,
@@ -1050,7 +1057,7 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
   async getMentions(form: Forms.GetReplies, options: RequestOptions) {
     const { items, next_page } = await this.client.listNotifications(
       {
-        type_: "mention",
+        type_: "Mention" as any,
         page_cursor:
           form.pageCursor === INIT_PAGE_TOKEN ? undefined : form.pageCursor,
         unread_only: form.unreadOnly,
