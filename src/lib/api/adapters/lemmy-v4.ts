@@ -634,6 +634,7 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
     const response = await fetch(`${this.instance}/api/v4/post/delete`, {
       method: "POST",
       headers: {
+        "Content-Type": "application/json",
         ...DEFAULT_HEADERS,
         ...(this.jwt ? { Authorization: `Bearer ${this.jwt}` } : {}),
       },
