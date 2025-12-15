@@ -561,8 +561,7 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
       enablePostDownvotes: enableDownvotes,
       enableCommentDownvotes: enableDownvotes,
       software: this.software,
-      // @ts-expect-error - oauth_providers available in Lemmy v1.0.0 but not in type definitions
-      oauthProviders: lemmySite.oauth_providers || [],
+      oauthProviders: (lemmySite as any).oauth_providers || [],
     };
 
     return {
