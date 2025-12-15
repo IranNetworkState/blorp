@@ -404,11 +404,10 @@ function LoginForm({
     instance,
   });
 
-  // OAuth providers from site data
-  // @ts-expect-error - oauth_providers is available in Lemmy API v4 but not in type definitions
-  const oauthProviders = (site.data?.oauth_providers || []) as OAuthProvider[];
-  // @ts-expect-error - site_view is available in Lemmy API v4 but not in type definitions  
-  const hasOAuthOnly = oauthProviders.length > 0 && site.data?.site_view?.local_site?.registration_mode === 'Closed';
+  // OAuth providers from transformed site data
+  // @ts-expect-error - oauthProviders added to transformed site object
+  const oauthProviders = (site.data?.site?.oauthProviders || []) as OAuthProvider[];
+  const hasOAuthOnly = oauthProviders.length > 0 && site.data?.site?.registrationMode === 'Closed';
 
   // OAuth handler
   const handleOAuthLogin = (provider: OAuthProvider) => {
