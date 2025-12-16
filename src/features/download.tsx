@@ -102,24 +102,13 @@ function Card({
 }
 
 const CARDS: { os: string; card: ReactNode }[] = [
-  {
-    os: "macos",
-    card: (
-      <Card
-        icon={<FaApple className="text-5xl" />}
-        description="Universal build for Intel and Apple Silicon"
-        downloadLink="https://github.com/Blorp-Labs/blorp/releases/latest/download/Mac-Installer.pkg"
-        os="MacOS"
-      />
-    ),
-  },
+  // MacOS app removed - Not applicable for Iran Nation Forums
   {
     os: "ios",
     card: (
       <Card
         icon={<FaAppStoreIos className="text-5xl fill-blue-500" />}
-        description="Designed for phones and tablets"
-        downloadLink="https://apps.apple.com/us/app/blorp-for-lemmy/id6739925430"
+        description="iOS app coming soon! Stay tuned."
         os="iOS"
       />
     ),
@@ -129,7 +118,8 @@ const CARDS: { os: string; card: ReactNode }[] = [
     card: (
       <Card
         icon={<FcAndroidOs className="text-5xl" />}
-        description="Closed beta testing, message moseschrute@lemmy.ml to join."
+        description="Connect with Iran Nation community on your Android device"
+        downloadLink="https://play.google.com/store/apps/details?id=com.irannation.app"
         os="Android"
       />
     ),

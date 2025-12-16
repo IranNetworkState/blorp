@@ -1,5 +1,7 @@
 {
-  "name": "Blorp",
+  "name": "Iran Nation Forums",
+  "short_name": "Iran Nation",
+  "description": "Iran Nation Is A Community dedicated To Dialogue About Free Iran.",
   "icons": [
     {
       "src": "../icons/icon-48.webp",

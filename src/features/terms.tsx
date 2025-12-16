@@ -49,13 +49,13 @@ You agree to indemnify and hold harmless Blorp’s contributors and maintainers 
 Blorp expressly prohibits any form of Child Sexual Abuse and Exploitation (“CSAE”).  
 
 **4.2 Reporting CSAE.**  
-You may report CSAE or other violations either in-App or via email at **support@blorpblorp.xyz**.  
+You may report CSAE or other violations either in-App or via email at **dev@irannation.com**.  
 
 **4.3 Legal Compliance.**  
 Blorp complies with applicable child protection laws, including mandatory reporting of confirmed CSAE to authorities (e.g., National Center for Missing & Exploited Children in the U.S.).  
 
 **4.4 Designated Contact.**  
-For CSAE-related inquiries, contact the Developer at **support@blorpblorp.xyz**.
+For CSAE-related inquiries, contact the Developer at **dev@irannation.com**.
 
 ---
 
@@ -100,7 +100,7 @@ These Terms are governed by the laws of the State of New Jersey, USA. Any disput
 ---
 
 **Contact & Support**  
-For support, bug reports, or feature requests, email **support@blorpblorp.xyz**.  
+For support, bug reports, or feature requests, email **dev@irannation.com**.  
 
 _By using Blorp, you acknowledge that you have read, understood, and agree to these Terms of Use._
 `;

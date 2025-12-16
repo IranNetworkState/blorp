@@ -79,7 +79,7 @@ function LegalNotice({ instance }: { instance: SelectedInstance }) {
       By signing up you agree to {instance.baseurl} and{" "}
       <a
         className="underline"
-        href="https://blorpblorp.xyz/terms"
+        href="https://irannation.dev/terms-of-use"
         target="_blank"
         rel="noreferrer noopener"
       >

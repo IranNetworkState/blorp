@@ -13,24 +13,24 @@ const POLICY = `
 **Updated:** April 19, 2025
 
 **Introduction**  
-Blorp is a decentralized social media client that allows users to interact with Lemmy servers of their choice. We prioritize your privacy and are committed to being transparent about how your data is handled (or not handled). This Privacy Policy explains what information we collect, how we use it, and your rights.
+Iran Nation Forums is a decentralized social media client that allows users to interact with Lemmy servers. We prioritize your privacy and are committed to being transparent about how your data is handled (or not handled). This Privacy Policy explains what information we collect, how we use it, and your rights.
 
 ---
 
 #### 1. Information We Collect  
 **We do not collect any information.**  
-Blorp does not gather crash logs, diagnostics, analytics data, or any personally identifiable information (PII).
+Iran Nation Forums does not gather crash logs, diagnostics, analytics data, or any personally identifiable information (PII).
 
 ---
 
 #### 2. How We Use Your Information  
-Since we collect no data, there is nothing to use. Your activity within Blorp remains private and confined to your device and the Lemmy server you choose to connect with.
+Since we collect no data, there is nothing to use. Your activity within Iran Nation Forums remains private and confined to your device and the Lemmy server you connect with.
 
 ---
 
 #### 3. Third‑Party Services  
 - **Lemmy SDK:**  
-  Blorp connects directly to Lemmy servers you select. While some data (such as post and comment content) is cached locally on your device to improve performance, **no data from your device is sent to us**. All network communication is directly between your device and the chosen Lemmy instance, which is not hosted or controlled by Blorp.  
+  Iran Nation Forums connects directly to the Lemmy server. While some data (such as post and comment content) is cached locally on your device to improve performance, **no data from your device is sent to us**. All network communication is directly between your device and the Lemmy instance.  
   
   For details on how your chosen Lemmy server handles your data, please refer to its privacy policy.
 
@@ -42,12 +42,12 @@ We do not share any data with third parties. Because we do not collect or store 
 ---
 
 #### 5. Data Retention  
-No data is collected or stored by Blorp, so there is no data retention policy needed.
+No data is collected or stored by Iran Nation Forums, so there is no data retention policy needed.
 
 ---
 
 #### 6. Your Rights  
-- There is no personal data collected by Blorp, so there are no personal data rights to exercise with us.  
+- There is no personal data collected by Iran Nation Forums, so there are no personal data rights to exercise with us.  
 - If you have questions about the handling of data by the Lemmy server you connect to, please contact the administrator of that server.
 
 ---

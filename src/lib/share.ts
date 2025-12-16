@@ -234,8 +234,8 @@ const canShare = _.memoize(async () => {
 });
 
 const origin = isCapacitor()
-  ? "https://blorpblorp.xyz"
-  : window.location.origin || "https://blorpblorp.xyz";
+? "https://forum.irannation.com"
+              : window.location.origin || "https://forum.irannation.com";
 
 export function useCanShare() {
   // Firefox doesn't typically allow sharing

@@ -34,7 +34,7 @@ I maintain a strict zero‑tolerance stance toward any form of child sexual abus
    Blrop does not store or moderate content itself—moderation is performed by each Lemmy instance you connect to.  
 2. **Reporting Requirements:**  
    - **Users:** Tap the “🚩 Report” button on any post or comment you suspect violates CSAE standards; reports go directly to the instance’s moderators.  
-   - **Developer:** If you’re unable to report via the instance, email **support@blorpblorp.xyz** with links or screenshots—I will forward your report to the appropriate moderators or authorities.  
+   - **Developer:** If you're unable to report via the instance, email **dev@irannation.com** with links or screenshots—we will forward your report to the appropriate moderators or authorities.
 3. **Blocking Non‑Compliant Instances:**  
    If an instance fails to enforce basic CSAE policies, I may blacklist that instance in a future app update to protect users.
 
@@ -42,7 +42,7 @@ I maintain a strict zero‑tolerance stance toward any form of child sexual abus
 
 ## 4. Reporting Mechanisms  
 - **In‑App “Report” Button:** Directs the report to the instance administrators.  
-- **Email Reports:** Send detailed reports (URLs, screenshots) to **support@blorpblorp.xyz**. Expect an acknowledgment within 24 hours.
+- **Email Reports:** Send detailed reports (URLs, screenshots) to **dev@irannation.com**. Expect an acknowledgment within 24 hours.
 
 ---
 
@@ -53,8 +53,8 @@ I maintain a strict zero‑tolerance stance toward any form of child sexual abus
 ---
 
 ## 6. Contact & Updates  
-- **Email:** support@blorpblorp.xyz
-- **Last Updated:** April 18, 2025
+- **Email:** dev@irannation.com
+- **Last Updated:** December 16, 2025
 
 > _This policy may be updated occasionally. Please revisit this page for the latest version._  
 `;
