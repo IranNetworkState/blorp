@@ -394,6 +394,7 @@ function LargePostCard({
                 post.read && "text-muted-foreground",
               )}
               id={bodyId}
+              dir={detectRTL(post.body, post.languageId) ? "rtl" : "ltr"}
             >
               {removeMd(post.body)}
             </p>
