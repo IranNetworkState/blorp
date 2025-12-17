@@ -3,7 +3,7 @@ import { z } from "zod";
 import _ from "lodash";
 import { normalizeInstance } from "./lib/utils";
 
-const FALLBACK_INSTANCE = "https://lemmy.zip";
+const FALLBACK_INSTANCE = "https://forum.irannation.com";
 
 function getDockerInjectedEnv<K extends string>(key: K) {
   const value = _.get(window, key);
