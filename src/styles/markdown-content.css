@@ -123,3 +123,36 @@ details > summary::-webkit-details-marker {
 .markdown-content details > summary::-webkit-details-marker {
   display: revert;
 }
+
+/* RTL Persian/Arabic font support */
+[dir="rtl"] .markdown-content {
+  font-family: "GanjNameh Sans", system-ui, -apple-system, sans-serif;
+}
+
+/* Keep code blocks in monospace even in RTL */
+[dir="rtl"] .markdown-content code,
+[dir="rtl"] .markdown-content pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  direction: ltr;
+  text-align: left;
+}
+
+/* RTL-specific list padding */
+[dir="rtl"] .markdown-content ul,
+[dir="rtl"] .markdown-content ol {
+  padding-inline-start: 2em;
+  padding-inline-end: 0;
+}
+
+/* RTL-specific blockquote border */
+[dir="rtl"] .markdown-content blockquote {
+  border-inline-start-width: 4px;
+  border-inline-end-width: 0;
+  padding-inline-start: 0.375rem;
+  padding-inline-end: 0;
+}
+
+/* RTL table text alignment */
+[dir="rtl"] .markdown-content table th {
+  text-align: right;
+}
