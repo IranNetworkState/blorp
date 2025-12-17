@@ -378,6 +378,7 @@ function convertPost({
     altText: post.alt_text ?? null,
     flairs: [],
     myVote: post_actions?.vote_is_upvote === true ? 1 : post_actions?.vote_is_upvote === false ? -1 : undefined,
+    languageId: post.language_id,
   };
 }
 function convertComment(commentView: lemmyV4.CommentView): Schemas.Comment {

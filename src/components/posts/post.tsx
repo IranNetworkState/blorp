@@ -517,7 +517,12 @@ function LargePostCard({
 
       {detailView && post.body && !post.deleted && !post.removed && (
         <div className="flex-1" {...doubeTapLike}>
-          <MarkdownRenderer markdown={post.body} className="pt-2" id={bodyId} />
+          <MarkdownRenderer 
+            markdown={post.body} 
+            className="pt-2" 
+            id={bodyId}
+            languageId={post.languageId}
+          />
         </div>
       )}
       <div

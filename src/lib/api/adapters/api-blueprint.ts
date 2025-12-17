@@ -113,6 +113,7 @@ export const postSchema = z.object({
   saved: z.boolean(),
   optimisticSaved: z.boolean().optional(),
   poll: postPollSchema.optional(),
+  languageId: z.number().optional(),
 });
 const communitySchema = z.object({
   createdAt: z.string(),
