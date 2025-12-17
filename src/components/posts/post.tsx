@@ -13,6 +13,7 @@ import {
   useDoubleTapPostLike,
 } from "./post-buttons";
 import { MarkdownRenderer } from "../markdown/renderer";
+import { detectRTL } from "@/src/lib/utils/rtl";
 import { twMerge } from "tailwind-merge";
 import { PostLoopsEmbed } from "./post-loops-embed";
 import { YouTubeVideoEmbed } from "../youtube";
@@ -378,6 +379,7 @@ function LargePostCard({
             !detailView && post.read && "text-muted-foreground",
           )}
           id={titleId}
+          dir={detectRTL(post.title, post.languageId) ? "rtl" : "ltr"}
         >
           {post.deleted ? "deleted" : post.removed ? "removed" : post.title}
         </span>
@@ -704,6 +706,7 @@ function SmallPostCard({
               "line-clamp-2 md:line-clamp-3",
               flairs && flairs.length > 0 && "line-clamp-1 md:line-clamp-2",
             )}
+            dir={detectRTL(post.title, post.languageId) ? "rtl" : "ltr"}
           >
             {post.deleted ? "deleted" : post.removed ? "removed" : post.title}
           </span>
@@ -796,6 +799,7 @@ function ExtraSmallPostCard({
               "line-clamp-2 md:line-clamp-3",
               flairs && flairs.length > 0 && "line-clamp-1 md:line-clamp-2",
             )}
+            dir={detectRTL(post.title, post.languageId) ? "rtl" : "ltr"}
           >
             {post.deleted ? "deleted" : post.removed ? "removed" : post.title}
           </span>
