@@ -765,6 +765,8 @@ export class LemmyV4Api implements ApiBlueprint<lemmyV4.LemmyHttp> {
       postCount: postItems.length,
       nextCursor: posts.next_page,
       rawKeys: Object.keys(posts),
+      firstPostLanguage: postItems[0]?.post?.language_id,
+      sampleLanguageIds: postItems.slice(0, 3).map((p: any) => p.post?.language_id),
     });
 
     return {

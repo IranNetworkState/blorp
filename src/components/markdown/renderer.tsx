@@ -18,7 +18,7 @@ import { cn } from "@/src/lib/utils";
 import DOMPurify from "dompurify";
 import { createContext } from "react";
 import { RoutePath } from "@/src/routing/routes";
-import { isRTL } from "@/src/lib/utils/rtl";
+import { detectRTL } from "@/src/lib/utils/rtl";
 import footnotePlugin from "markdown-it-footnote";
 // @ts-expect-error
 import markdownitSub from "markdown-it-sub";
@@ -273,7 +273,8 @@ export function MarkdownRenderer({
   languageId?: number | null;
 }) {
   const root = useLinkContext().root;
-  const direction = isRTL(languageId) ? "rtl" : "ltr";
+  const direction = detectRTL(markdown, languageId) ? "rtl" : "ltr";
+  console.log("🔤 [MarkdownRenderer] text:", markdown?.slice(0, 30), "languageId:", languageId, "direction:", direction);
   const content = (
     <div
       className={cn("markdown-content", dim && "text-foreground/70", className)}
